@@ -36,14 +36,20 @@ chosen_item=$(
 folder=$(echo $chosen_item | awk '{print $1}')
 chosen_item=$(echo $chosen_item | awk '{print $2}')
 
-[ -z "$folder" ] || folder=(--folder "\"$folder\"")
-
 case "$query" in
 code)
-	rbw code ${folder[@]} "$chosen_item"
+	if [ -z "$folder" ]; then
+		rbw code "$chosen_item"
+	else
+		rbw code --folder "${folder}" "$chosen_item"
+	fi
 	;;
 *)
 	# Select chosen item from vault, return login.query
-	rbw get ${folder[@]} "$chosen_item" --raw | jq --join-output ".data.$query"
+	if [ -z "$folder" ]; then
+		rbw get "$chosen_item" --raw | jq --join-output ".data.$query"
+	else
+		rbw get --folder "${folder}" "$chosen_item" --raw | jq --join-output ".data.$query"
+	fi
 	;;
 esac
