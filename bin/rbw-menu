@@ -24,9 +24,9 @@ query=${1:-username}
 chosen_item=$(
 	# If RBW_MENU_COMMAND is unset, use wofi
 	if [ "${RBW_MENU_COMMAND:-}" = "" ]; then
-		rbw list | wofi --dmenu --matching fuzzy --insensitive --prompt "$query"
+		rbw list --fields folder,name | wofi --dmenu --matching fuzzy --insensitive --prompt "$query" | awk '{ print $2 }'
 	else
-		eval "rbw list | $RBW_MENU_COMMAND"
+		eval "rbw list --fields folder,name | $RBW_MENU_COMMAND | awk '{ print $2 }'"
 	fi
 )
 
