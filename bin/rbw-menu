@@ -36,7 +36,7 @@ chosen_item=$(
 folder=$(echo $chosen_item | awk '{print $1}')
 chosen_item=$(echo $chosen_item | awk '{print $2}')
 
-[ -z $folder ] || folder=(--folder "\"$folder\"")
+[ -z "$folder" ] || folder=(--folder "\"$folder\"")
 
 case "$query" in
 code)
