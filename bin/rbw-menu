@@ -24,32 +24,32 @@ query=${1:-username}
 chosen_item=$(
 	# If RBW_MENU_COMMAND is unset, use wofi
 	if [ "${RBW_MENU_COMMAND:-}" = "" ]; then
-		rbw list --fields folder,name | wofi --dmenu --matching fuzzy --insensitive --prompt "$query"
+		rbw list --fields name,folder | wofi --dmenu --matching fuzzy --insensitive --prompt "$query"
 	else
-		eval "rbw list --fields folder,name | $RBW_MENU_COMMAND"
+		eval "rbw list --fields name,folder | $RBW_MENU_COMMAND"
 	fi
 )
 
 # Exit if user didn't select anything
 [ "$chosen_item" = "" ] && exit 1
 
-folder=$(echo $chosen_item | awk '{print $1}')
-chosen_item=$(echo $chosen_item | awk '{print $2}')
+item=$(echo $chosen_item | awk '{print $1}')
+folder=$(echo $chosen_item | awk '{print $2}')
 
 case "$query" in
 code)
 	if [ -z "$folder" ]; then
-		rbw code "$chosen_item"
+		rbw code "$item"
 	else
-		rbw code --folder "${folder}" "$chosen_item"
+		rbw code --folder "${folder}" "$item"
 	fi
 	;;
 *)
 	# Select chosen item from vault, return login.query
 	if [ -z "$folder" ]; then
-		rbw get "$chosen_item" --raw | jq --join-output ".data.$query"
+		rbw get "$item" --raw | jq --join-output ".data.$query"
 	else
-		rbw get --folder "${folder}" "$chosen_item" --raw | jq --join-output ".data.$query"
+		rbw get --folder "${folder}" "$item" --raw | jq --join-output ".data.$query"
 	fi
 	;;
 esac
